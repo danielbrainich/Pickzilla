@@ -25,13 +25,29 @@ function App() {
 
           if (!sku || !name || isNaN(qty)) return;
 
-          // Trim name into clean columns
+          // Split by commas
           const nameParts = name.split(',');
-          const coffeeName = nameParts[1]?.trim() || 'Unknown';
+
+          // Initial coffeeName from second part
+          let coffeeName = nameParts[1]?.trim() || 'Unknown';
+
+          // Find type (Whole Bean Coffee, Ground Coffee, Fine Ground Coffee)
           const typeMatch = name.match(/(Whole Bean Coffee|Ground Coffee|Fine Ground Coffee)/i);
-          const type = typeMatch ? typeMatch[0] : 'Unknown';
+          let type = typeMatch ? typeMatch[0] : 'Unknown';
+
+          // Remove the word "Coffee" from type
+          type = type.replace(/Coffee/i, '').trim();
+
+          // Remove the type phrase from coffeeName if it exists there (case insensitive)
+          if (type !== 'Unknown') {
+            const regexTypeInName = new RegExp(type, 'i');
+            coffeeName = coffeeName.replace(regexTypeInName, '').trim();
+          }
+
+          // Find size (e.g., "10.5 oz Bag") and remove "Bag"
           const sizeMatch = name.match(/[\d.]+\s*oz\s*Bag/i);
-          const size = sizeMatch ? sizeMatch[0] : 'Unknown';
+          let size = sizeMatch ? sizeMatch[0] : 'Unknown';
+          size = size.replace(/Bag/i, '').trim();
 
           const key = `${sku}::${coffeeName}::${type}::${size}`;
           if (!grouped[key]) {
@@ -55,7 +71,7 @@ function App() {
   const openPickListInNewTab = () => {
     if (pickList.length === 0) return;
 
-const html = `
+    const html = `
   <html>
   <head>
     <title>Pick List</title>
@@ -112,8 +128,8 @@ const html = `
       </thead>
       <tbody>
         ${pickList
-          .map(
-            (item) => `
+        .map(
+          (item) => `
           <tr>
             <td>${item.sku}</td>
             <td>${item.coffeeName}</td>
@@ -122,8 +138,8 @@ const html = `
             <td>${item.qty}</td>
           </tr>
         `
-          )
-          .join('')}
+        )
+        .join('')}
       </tbody>
     </table>
   </body>
@@ -142,7 +158,12 @@ const html = `
 
   return (
     <div className="App container text-center py-5">
-      <header className="App-header mb-4">
+      <header className="App-header mb-4"> 
+      <img
+        src="/medium-tiger.png"
+        alt="Logo"
+        style={{ display: 'block', margin: '0 auto 1rem', width: '50px', height: 'auto' }}
+      />
         <h2 className="mb-4">Amazon Pick List Generator</h2>
 
         <input
@@ -164,9 +185,9 @@ const html = `
         </div>
 
         {fileName && (
-<p className="mt-3 small file-loaded-text">
-  File loaded: <strong>{fileName}</strong>
-</p>
+          <p className="mt-3 small file-loaded-text">
+            File loaded: <strong>{fileName}</strong>
+          </p>
         )}
       </header>
     </div>
