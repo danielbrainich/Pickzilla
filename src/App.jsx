@@ -208,7 +208,7 @@ function App() {
           backgroundColor: '#121212',
         }}
       >
-        built by Daniel B.
+        built by <a href="https://github.com/danielbrainich" className="text-danger" target="_blank" rel="noopener noreferrer">Daniel B.</a>
       </footer>
     </div>
   );
