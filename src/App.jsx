@@ -33,20 +33,20 @@ function App() {
 
           // Find type (Whole Bean Coffee, Ground Coffee, Fine Ground Coffee)
           const typeMatch = name.match(/(Whole Bean Coffee|Ground Coffee|Fine Ground Coffee)/i);
-          let type = typeMatch ? typeMatch[0] : 'Unknown';
+          let type = typeMatch ? typeMatch[0] : '';
 
           // Remove the word "Coffee" from type
           type = type.replace(/Coffee/i, '').trim();
 
           // Remove the type phrase from coffeeName if it exists there (case insensitive)
-          if (type !== 'Unknown') {
+          if (type) {
             const regexTypeInName = new RegExp(type, 'i');
             coffeeName = coffeeName.replace(regexTypeInName, '').trim();
           }
 
           // Find size (e.g., "10.5 oz Bag") and remove "Bag"
           const sizeMatch = name.match(/[\d.]+\s*oz\s*Bag/i);
-          let size = sizeMatch ? sizeMatch[0] : 'Unknown';
+          let size = sizeMatch ? sizeMatch[0] : '';
           size = size.replace(/Bag/i, '').trim();
 
           const key = `${sku}::${coffeeName}::${type}::${size}`;
@@ -95,7 +95,7 @@ function App() {
         margin: 0 auto;
         border-collapse: collapse;
         font-size: 1rem;
-        table-layout: auto; /* columns sized to content */
+        table-layout: auto;
       }
       th, td {
         padding: 10px 14px;
@@ -107,11 +107,14 @@ function App() {
         color: #fff;
       }
       tr {
-        background-color: #1e1e1e; /* uniform row background */
+        background-color: #1e1e1e;
       }
       tr:hover {
-        background-color: #2a2a2a; /* subtle hover effect */
+        background-color: #2a2a2a;
       }
+      .no-wrap {
+        white-space: nowrap;
+      }  
     </style>
   </head>
   <body>
@@ -134,7 +137,7 @@ function App() {
             <td>${item.sku}</td>
             <td>${item.coffeeName}</td>
             <td>${item.type}</td>
-            <td>${item.size}</td>
+            <td class="no-wrap">${item.size}</td>
             <td>${item.qty}</td>
           </tr>
         `
@@ -158,12 +161,12 @@ function App() {
 
   return (
     <div className="App container text-center py-5">
-      <header className="App-header mb-4"> 
-      <img
-        src="/medium-tiger.png"
-        alt="Logo"
-        style={{ display: 'block', margin: '0 auto 1rem', width: '50px', height: 'auto' }}
-      />
+      <header className="App-header mb-4">
+        <img
+          src="/medium-tiger.png"
+          alt="Logo"
+          style={{ display: 'block', margin: '0 auto 1rem', width: '50px', height: 'auto' }}
+        />
         <h2 className="mb-4">Amazon Pick List Generator</h2>
 
         <input
@@ -183,13 +186,30 @@ function App() {
             Generate Pick List
           </button>
         </div>
-
-        {fileName && (
-          <p className="mt-3 small file-loaded-text">
-            File loaded: <strong>{fileName}</strong>
-          </p>
-        )}
+        <div style={{ minHeight: '2rem', marginTop: '2rem' }}>
+          {fileName ? (
+            <p className="small file-loaded-text">
+              File loaded: <strong>{fileName}</strong>
+            </p>
+          ) : (
+            <span>&nbsp;</span>
+          )}
+        </div>
       </header>
+      <footer
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          width: '100%',
+          textAlign: 'center',
+          padding: '0.5rem 0',
+          fontSize: '0.8rem',
+          color: '#888',
+          backgroundColor: '#121212',
+        }}
+      >
+        built by Daniel B.
+      </footer>
     </div>
   );
 }
