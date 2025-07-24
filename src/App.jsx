@@ -5,6 +5,7 @@ import './App.css';
 function App() {
   const [fileName, setFileName] = useState(null);
   const [pickList, setPickList] = useState([]);
+  const [orderIds, setOrderIds] = useState([]);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -25,30 +26,58 @@ function App() {
 
           if (!sku || !name || isNaN(qty)) return;
 
-          // Split by commas
-          const nameParts = name.split(',');
-
-          // Initial coffeeName from second part
-          let coffeeName = nameParts[1]?.trim() || 'Unknown';
-
-          // Find type (Whole Bean Coffee, Ground Coffee, Fine Ground Coffee)
+          // --- Type
           const typeMatch = name.match(/(Whole Bean Coffee|Ground Coffee|Fine Ground Coffee)/i);
           let type = typeMatch ? typeMatch[0] : '';
+          type = type.replace(/Coffee/i, '').trim(); // Remove "Coffee" from type
 
-          // Remove the word "Coffee" from type
-          type = type.replace(/Coffee/i, '').trim();
+          // --- Coffee Name (extract everything before size/type info)
+          let coffeeName = name;
 
-          // Remove the type phrase from coffeeName if it exists there (case insensitive)
-          if (type) {
-            const regexTypeInName = new RegExp(type, 'i');
-            coffeeName = coffeeName.replace(regexTypeInName, '').trim();
+          // Remove everything starting from "10.5 oz", "Pack of", "Whole Bean", etc.
+          coffeeName = coffeeName.replace(/(Whole Bean Coffee|Ground Coffee|Fine Ground Coffee)/i, '');
+          coffeeName = coffeeName.replace(/([\d.]+\s*(oz|lb)\s*(Bag|Box)?)/i, '');
+          coffeeName = coffeeName.replace(/\(?Pack\s+of\s+\d+\)?/i, '');
+          coffeeName = coffeeName.replace(/\(?\d+\s+Pack\)?/i, '');
+          coffeeName = coffeeName.replace(/\d+\s+Pack\s+Box/i, '');
+          coffeeName = coffeeName.replace(/\bCoffee\b/i, '');
+          coffeeName = coffeeName.replace(/,+$/, '').trim();
+
+          // Optional: clean prefix like "Equator Coffees," to keep only the product part
+          const parts = coffeeName.split(',');
+          coffeeName = parts.length > 1 ? parts[1].trim() : parts[0].trim();
+
+          // --- Size logic
+          let size = '';
+
+          const ozMatch = name.match(/([\d.]+)\s*oz\s*(Bag|Box)?/i);
+          if (ozMatch) {
+            size = `${ozMatch[1]} oz`;
+          } else {
+            const lbMatch = name.match(/([\d.]+)\s*lb\s*(Bag|Box)?/i);
+            if (lbMatch) {
+              size = `${lbMatch[1]} lb`;
+            } else {
+              const packOfMatch = name.match(/\(?Pack\s+of\s+(\d+)\)?/i);
+              const frontPackMatch = name.match(/\(?(\d+)\s+Pack\)?/i);
+              const packBoxMatch = name.match(/(\d+)\s+Pack\s+Box/i);
+
+              if (packOfMatch) {
+                size = `${packOfMatch[1]}-Pack`;
+              } else if (frontPackMatch) {
+                size = `${frontPackMatch[1]}-Pack`;
+              } else if (packBoxMatch) {
+                size = `${packBoxMatch[1]}-Pack`;
+              } else {
+                const fallback = name.match(/([\d.]+)\s*(oz|lb)/i);
+                if (fallback) {
+                  size = `${fallback[1]} ${fallback[2].toLowerCase()}`;
+                }
+              }
+            }
           }
 
-          // Find size (e.g., "10.5 oz Bag") and remove "Bag"
-          const sizeMatch = name.match(/[\d.]+\s*oz\s*Bag/i);
-          let size = sizeMatch ? sizeMatch[0] : '';
-          size = size.replace(/Bag/i, '').trim();
-
+          // --- Grouping key
           const key = `${sku}::${coffeeName}::${type}::${size}`;
           if (!grouped[key]) {
             grouped[key] = {
@@ -63,6 +92,8 @@ function App() {
           grouped[key].qty += qty;
         });
 
+        const orderIds = Array.from(new Set(data.map(row => row['order-id']).filter(Boolean)));
+        setOrderIds(orderIds);
         setPickList(Object.values(grouped));
       },
     });
@@ -124,7 +155,7 @@ function App() {
         <tr>
           <th>SKU</th>
           <th>Coffee Name</th>
-          <th>Type</th>
+          <th>Grind</th>
           <th>Size</th>
           <th>Quantity</th>
         </tr>
@@ -145,6 +176,18 @@ function App() {
         .join('')}
       </tbody>
     </table>
+<table style="margin-top: 3rem;">
+  <thead>
+    <tr>
+      <th>Order IDs</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="white-space: pre-wrap;">${orderIds.join(', ')}</td>
+    </tr>
+  </tbody>
+</table>
   </body>
   </html>
 `;
@@ -208,7 +251,7 @@ function App() {
           backgroundColor: '#121212',
         }}
       >
-        built by <a href="https://github.com/danielbrainich" className="text-danger" target="_blank" rel="noopener noreferrer">Daniel B.</a>
+        built by Daniel B.
       </footer>
     </div>
   );
