@@ -39,6 +39,7 @@ function App() {
           }
 
           // Remove everything starting from "10.5 oz", "Pack of", "Whole Bean", etc.
+          let coffeeName = name;
           coffeeName = coffeeName.replace(/(Whole Bean Coffee|Ground Coffee|Fine Ground Coffee)/i, '');
           coffeeName = coffeeName.replace(/([\d.]+\s*(oz|lb)\s*(Bag|Box)?)/i, '');
           coffeeName = coffeeName.replace(/\(?Pack\s+of\s+\d+\)?/i, '');
