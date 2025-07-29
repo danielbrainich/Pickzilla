@@ -7,6 +7,8 @@ function App() {
   const [pickList, setPickList] = useState([]);
   const [orderIds, setOrderIds] = useState([]);
 
+  console.log("test")
+
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
