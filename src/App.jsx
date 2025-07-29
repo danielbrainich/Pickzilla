@@ -31,8 +31,12 @@ function App() {
           let type = typeMatch ? typeMatch[0] : '';
           type = type.replace(/Coffee/i, '').trim(); // Remove "Coffee" from type
 
-          // --- Coffee Name (extract everything before size/type info)
-          let coffeeName = name;
+          // Rename types
+          if (/^fine ground$/i.test(type)) {
+            type = 'Espresso Ground';
+          } else if (/^ground$/i.test(type)) {
+            type = 'Medium Grind';
+          }
 
           // Remove everything starting from "10.5 oz", "Pack of", "Whole Bean", etc.
           coffeeName = coffeeName.replace(/(Whole Bean Coffee|Ground Coffee|Fine Ground Coffee)/i, '');
