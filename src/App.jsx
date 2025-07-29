@@ -33,7 +33,7 @@ function App() {
 
           // Rename types
           if (/^fine ground$/i.test(type)) {
-            type = 'Espresso Ground';
+            type = 'Espresso Grind';
           } else if (/^ground$/i.test(type)) {
             type = 'Medium Grind';
           }
