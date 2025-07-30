@@ -29,25 +29,28 @@ html, body {
   gap: 1.5rem;
 }
 
-table {
+.custom-table {
   width: 100%;
-  max-width: 800px;
-  margin: 1rem auto;
-  border-collapse: collapse;
-  font-size: 0.95rem;
-  color: white;
+  table-layout: auto; /* allows natural sizing */
 }
 
-th,
-td {
+.custom-table th,
+.custom-table td {
   padding: 0.5rem;
-  border: 1px solid #ddd;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  vertical-align: middle;
   text-align: left;
-  color: white;
 }
 
-th {
-  background-color: #333;
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid #444 !important;
+}
+
+.table thead th {
+  border-bottom: 1px solid #444 !important;
 }
 
 /* Small text style */

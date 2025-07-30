@@ -154,7 +154,7 @@ style={{ display: 'block', margin: '0 auto 1rem', borderRadius: '10px' }}
           </p>
         </div>
 ) : (
-<div className="picklist-screen p-4 text-start">
+<div className="picklist-screen container text-start">
 <button
   onClick={() => {
     setShowPickList(false); // or setShowPickList(false);
@@ -176,25 +176,32 @@ style={{ display: 'block', margin: '0 auto 1rem', borderRadius: '10px' }}
 >
   ← Back
 </button>
-  <h3>Pick List{fileName ? ` - ${fileName}` : ''}</h3>
-<table className="table table-dark table-bordered table-sm">
-  <thead>
-    <tr>
-      <th>SKU</th>
-      <th>Product Name</th>
-      <th>Quantity</th>
-    </tr>
-  </thead>
-  <tbody>
-    {pickList.map((item, index) => (
-      <tr key={index}>
-        <td>{item.sku}</td>
-        <td>{item.name}</td>
-        <td>{item.qty}</td>
-      </tr>
-    ))}
-  </tbody>
-</table>
+  <h3 className="pt-2 pb-2">Pick List{fileName ? ` - ${fileName}` : ''}</h3>
+  <div className="table-responsive">
+    <table className="table table-dark table-bordered table-sm custom-table">
+        <colgroup>
+    <col style={{ width: '15%' }} />  {/* SKU */}
+    <col style={{ width: '75%' }} />  {/* Product Name */}
+    <col style={{ width: '7%' }} />  {/* Quantity */}
+  </colgroup>
+      <thead>
+        <tr>
+          <th>SKU</th>
+          <th>Product Name</th>
+          <th>Quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+        {pickList.map((item, index) => (
+          <tr key={index}>
+            <td>{item.sku}</td>
+            <td>{item.name}</td>
+            <td>{item.qty}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
 
   {orderIds.length > 0 && (
     <div style={{ marginTop: '2rem' }}>
