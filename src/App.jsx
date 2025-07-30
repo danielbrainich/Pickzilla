@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Papa from 'papaparse';
 import './App.css';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
+import { useRef } from 'react';
 
 function App() {
   const [showInfo, setShowInfo] = useState(false);
@@ -9,102 +10,46 @@ function App() {
   const [fileName, setFileName] = useState('');
   const [orderIds, setOrderIds] = useState([]);
   const [showPickList, setShowPickList] = useState(false);
+  const fileInputRef = useRef(null);
+
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     setFileName(file.name);
 
-    Papa.parse(file, {
-      header: true,
-      delimiter: '\t',
-      complete: (results) => {
-        const data = results.data;
-        const grouped = {};
+Papa.parse(file, {
+  header: true,
+  delimiter: '\t',
+  complete: (results) => {
+    const data = results.data;
+    const grouped = {};
 
-        data.forEach((row) => {
-          const sku = row['sku'];
-          const name = row['product-name'];
-          const qty = parseInt(row['quantity-to-ship'], 10);
+    data.forEach((row) => {
+      const sku = row['sku'];
+      const name = row['product-name'];
+      const qty = parseInt(row['quantity-to-ship'], 10);
 
-          if (!sku || !name || isNaN(qty)) return;
+      if (!sku || !name || isNaN(qty)) return;
 
-          // --- Type
-          const typeMatch = name.match(/(Whole Bean Coffee|Ground Coffee|Fine Ground Coffee)/i);
-          let type = typeMatch ? typeMatch[0] : '';
-          type = type.replace(/Coffee/i, '').trim(); // Remove "Coffee" from type
+      const key = `${sku}::${name}`;
 
-          // Rename types
-          if (/^fine ground$/i.test(type)) {
-            type = 'Espresso Grind';
-          } else if (/^ground$/i.test(type)) {
-            type = 'Medium Grind';
-          }
+      if (!grouped[key]) {
+        grouped[key] = {
+          sku,
+          name,
+          qty: 0,
+        };
+      }
 
-          // Remove everything starting from "10.5 oz", "Pack of", "Whole Bean", etc.
-          let coffeeName = name;
-          coffeeName = coffeeName.replace(/(Whole Bean Coffee|Ground Coffee|Fine Ground Coffee)/i, '');
-          coffeeName = coffeeName.replace(/([\d.]+\s*(oz|lb)\s*(Bag|Box)?)/i, '');
-          coffeeName = coffeeName.replace(/\(?Pack\s+of\s+\d+\)?/i, '');
-          coffeeName = coffeeName.replace(/\(?\d+\s+Pack\)?/i, '');
-          coffeeName = coffeeName.replace(/\d+\s+Pack\s+Box/i, '');
-          coffeeName = coffeeName.replace(/\bCoffee\b/i, '');
-          coffeeName = coffeeName.replace(/,+$/, '').trim();
-
-          // Optional: clean prefix like "Equator Coffees," to keep only the product part
-          const parts = coffeeName.split(',');
-          coffeeName = parts.length > 1 ? parts[1].trim() : parts[0].trim();
-
-          // --- Size logic
-          let size = '';
-
-          const ozMatch = name.match(/([\d.]+)\s*oz\s*(Bag|Box)?/i);
-          if (ozMatch) {
-            size = `${ozMatch[1]} oz`;
-          } else {
-            const lbMatch = name.match(/([\d.]+)\s*lb\s*(Bag|Box)?/i);
-            if (lbMatch) {
-              size = `${lbMatch[1]} lb`;
-            } else {
-              const packOfMatch = name.match(/\(?Pack\s+of\s+(\d+)\)?/i);
-              const frontPackMatch = name.match(/\(?(\d+)\s+Pack\)?/i);
-              const packBoxMatch = name.match(/(\d+)\s+Pack\s+Box/i);
-
-              if (packOfMatch) {
-                size = `${packOfMatch[1]}-Pack`;
-              } else if (frontPackMatch) {
-                size = `${frontPackMatch[1]}-Pack`;
-              } else if (packBoxMatch) {
-                size = `${packBoxMatch[1]}-Pack`;
-              } else {
-                const fallback = name.match(/([\d.]+)\s*(oz|lb)/i);
-                if (fallback) {
-                  size = `${fallback[1]} ${fallback[2].toLowerCase()}`;
-                }
-              }
-            }
-          }
-
-          // --- Grouping key
-          const key = `${sku}::${coffeeName}::${type}::${size}`;
-          if (!grouped[key]) {
-            grouped[key] = {
-              sku,
-              coffeeName,
-              type,
-              size,
-              qty: 0,
-            };
-          }
-
-          grouped[key].qty += qty;
-        });
-
-        const orderIds = Array.from(new Set(data.map(row => row['order-id']).filter(Boolean)));
-        setOrderIds(orderIds);
-        setPickList(Object.values(grouped));
-      },
+      grouped[key].qty += qty;
     });
+
+    const orderIds = Array.from(new Set(data.map(row => row['order-id']).filter(Boolean)));
+    setOrderIds(orderIds);
+    setPickList(Object.values(grouped));
+  },
+});
   };
 
  return (
@@ -113,11 +58,11 @@ function App() {
         <>
           <header className="App-header mb-4">
             <img
-              src="/godzilla-192x192.png"
+              src="/godzilla.gif"
               alt="Logo"
-              width="50"
-              height="50"
-              style={{ display: 'block', margin: '0 auto 1rem' }}
+              width="300"
+              height="auto"
+style={{ display: 'block', margin: '0 auto 1rem', borderRadius: '10px' }}
             />
             <div
               style={{
@@ -146,6 +91,7 @@ function App() {
               </button>
             </div>
             <input
+              ref={fileInputRef}
               type="file"
               accept=".txt,.tsv"
               onChange={handleFileUpload}
@@ -177,7 +123,13 @@ function App() {
         // Info screen
         <div className="info-screen p-4 text-start">
         <button
-          onClick={() => setShowInfo(false)}
+          onClick={() => {
+            setShowInfo(false); // or setShowPickList(false);
+            setFileName('');
+            setPickList([]);
+            setOrderIds([]);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+          }}
           className="link-success"
           aria-label="Back to main screen"
           style={{
@@ -185,8 +137,8 @@ function App() {
             border: 'none',
             padding: 0,
             cursor: 'pointer',
-            color: '#198754', // ensure it uses your green color
-            textDecoration: 'underline', // optional, for link style
+            color: '#198754',
+            textDecoration: 'underline',
           }}
         >
           ← Back
@@ -203,47 +155,46 @@ function App() {
         </div>
 ) : (
 <div className="picklist-screen p-4 text-start">
-  <button
-    onClick={() => setShowPickList(false)}
-    className="link-success"
-    aria-label="Back to main screen"
-    style={{
-      background: 'none',
-      border: 'none',
-      padding: 0,
-      cursor: 'pointer',
-      color: '#198754',
-      textDecoration: 'underline',
-      fontSize: '1rem',
-      marginBottom: '1rem',
-    }}
-  >
-    ← Back
-  </button>
-
+<button
+  onClick={() => {
+    setShowPickList(false); // or setShowPickList(false);
+    setFileName('');
+    setPickList([]);
+    setOrderIds([]);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  }}
+  className="link-success"
+  aria-label="Back to main screen"
+  style={{
+    background: 'none',
+    border: 'none',
+    padding: 0,
+    cursor: 'pointer',
+    color: '#198754',
+    textDecoration: 'underline',
+  }}
+>
+  ← Back
+</button>
   <h3>Pick List{fileName ? ` - ${fileName}` : ''}</h3>
-  <table className="table table-dark table-bordered table-sm">
-    <thead>
-      <tr>
-        <th>SKU</th>
-        <th>Coffee Name</th>
-        <th>Grind</th>
-        <th>Size</th>
-        <th>Quantity</th>
+<table className="table table-dark table-bordered table-sm">
+  <thead>
+    <tr>
+      <th>SKU</th>
+      <th>Product Name</th>
+      <th>Quantity</th>
+    </tr>
+  </thead>
+  <tbody>
+    {pickList.map((item, index) => (
+      <tr key={index}>
+        <td>{item.sku}</td>
+        <td>{item.name}</td>
+        <td>{item.qty}</td>
       </tr>
-    </thead>
-    <tbody>
-      {pickList.map((item, index) => (
-        <tr key={index}>
-          <td>{item.sku}</td>
-          <td>{item.coffeeName}</td>
-          <td>{item.type}</td>
-          <td>{item.size}</td>
-          <td>{item.qty}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
+    ))}
+  </tbody>
+</table>
 
   {orderIds.length > 0 && (
     <div style={{ marginTop: '2rem' }}>
