@@ -36,7 +36,7 @@ function App() {
         if (missingHeaders.length > 0) {
           const plural = missingHeaders.length > 1;
           setError(
-  `File is missing required ${plural ? 'headers' : 'header'}: ${missingHeaders.join(', ')}. Please upload a valid file.`
+            `File is missing required ${plural ? 'headers' : 'header'}: ${missingHeaders.join(', ')}. Please upload a valid file.`
           );
           setPickList([]);
           setOrderIds([]);
@@ -92,30 +92,14 @@ function App() {
               alt="Logo"
               width="300"
               height="auto"
-              style={{ display: 'block', margin: '0 auto 1rem', borderRadius: '10px' }}
+              className="pickzilla-logo"
             />
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.5rem',
-                marginBottom: '1rem',
-              }}
-            >
+            <div className="title-row">
               <h2 style={{ margin: 0 }}>Pickzilla</h2>
               <button
                 onClick={() => setShowInfo(true)}
                 aria-label="Show info about Pickzilla"
-                style={{
-                  color: '#198754',
-                  fontSize: '1.5rem',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  lineHeight: 1,
-                  transform: 'translateY(-1px)', // adjust as needed
-                }}
+                className="info-button"
               >
                 <AiOutlineInfoCircle />
               </button>
@@ -128,22 +112,19 @@ function App() {
               className="form-control mb-3"
               aria-label="Upload TSV or TXT file"
             />
-{error && (
-  <div
-    className="alert alert-success alert-dismissible fade show"
-    role="alert"
-    style={{ textAlign: 'left' }}
-  >
-    {error}
-    <button
-      type="button"
-      className="btn-close"
-      data-bs-dismiss="alert"
-      aria-label="Close"
-      onClick={() => setError('')}
-    ></button>
-  </div>
-)}
+            {error && (
+              <div className="alert-success-custom" role="alert">
+                {error}
+                <button
+                  type="button"
+                  onClick={() => setError('')}
+                  aria-label="Close"
+                  className="alert-close-button"
+                >
+                  ×
+                </button>
+              </div>
+            )}
             <div>
               <button
                 onClick={() => setShowPickList(true)}
@@ -176,16 +157,8 @@ function App() {
               setError('');
               if (fileInputRef.current) fileInputRef.current.value = '';
             }}
-            className="link-success"
+            className="back-button"
             aria-label="Back to main screen"
-            style={{
-              background: 'none',
-              border: 'none',
-              padding: 0,
-              cursor: 'pointer',
-              color: '#198754',
-              textDecoration: 'underline',
-            }}
           >
             ← Back
           </button>
@@ -211,16 +184,8 @@ function App() {
               setError('');
               if (fileInputRef.current) fileInputRef.current.value = '';
             }}
-            className="link-success"
+            className="back-button"
             aria-label="Back to main screen"
-            style={{
-              background: 'none',
-              border: 'none',
-              padding: 0,
-              cursor: 'pointer',
-              color: '#198754',
-              textDecoration: 'underline',
-            }}
           >
             ← Back
           </button>
@@ -259,21 +224,7 @@ function App() {
           )}
         </div>
       )}
-      <footer
-        style={{
-          position: 'fixed',
-          bottom: 0,
-          width: '100%',
-          textAlign: 'center',
-          padding: '0.5rem 0',
-          fontSize: '0.8rem',
-          color: '#888',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '0.5rem',
-        }}
-      >
+      <footer className="footer">
         built by{' '}
         <a
           href="https://github.com/danielbrainich"
