@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import Papa from 'papaparse';
 import './App.css';
+import { AiOutlineInfoCircle } from 'react-icons/ai';
 
 function App() {
-  const [fileName, setFileName] = useState(null);
+  const [showInfo, setShowInfo] = useState(false);
   const [pickList, setPickList] = useState([]);
+  const [fileName, setFileName] = useState('');
   const [orderIds, setOrderIds] = useState([]);
-
-  console.log("test")
+  const [showPickList, setShowPickList] = useState(false);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -106,146 +107,152 @@ function App() {
     });
   };
 
-  const openPickListInNewTab = () => {
-    if (pickList.length === 0) return;
+ return (
+    <div className="App container text-center py-5" style={{ minHeight: '100vh', paddingBottom: '3rem' }}>
+{!showInfo && !showPickList ? (
+        <>
+          <header className="App-header mb-4">
+            <img
+              src="/godzilla-192x192.png"
+              alt="Logo"
+              width="50"
+              height="50"
+              style={{ display: 'block', margin: '0 auto 1rem' }}
+            />
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                marginBottom: '1rem',
+              }}
+            >
+              <h2 style={{ margin: 0 }}>Pickzilla</h2>
+              <button
+                onClick={() => setShowInfo(true)}
+                aria-label="Show info about Pickzilla"
+                style={{
+                  color: '#198754',
+                  fontSize: '1.5rem',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  lineHeight: 1,
+                  transform: 'translateY(-1px)', // adjust as needed
+                }}
+              >
+                <AiOutlineInfoCircle />
+              </button>
+            </div>
+            <input
+              type="file"
+              accept=".txt,.tsv"
+              onChange={handleFileUpload}
+              className="form-control mb-3"
+              aria-label="Upload TSV or TXT file"
+            />
 
-    const html = `
-  <html>
-  <head>
-    <title>Pick List</title>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <style>
-      body {
-        background-color: #121212;
-        color: #f0f0f0;
-        font-family: sans-serif;
-        padding: 2rem;
-        margin: 0;
-      }
-      h2 {
-        margin-bottom: 1rem;
-        color: #fff;
-        text-align: center;
-      }
-      table {
-        max-width: 700px;
-        width: 100%;
-        margin: 0 auto;
-        border-collapse: collapse;
-        font-size: 1rem;
-        table-layout: auto;
-      }
-      th, td {
-        padding: 10px 14px;
-        border: 1px solid #444;
-        text-align: left;
-      }
-      th {
-        background-color: #333;
-        color: #fff;
-      }
-      tr {
-        background-color: #1e1e1e;
-      }
-      tr:hover {
-        background-color: #2a2a2a;
-      }
-      .no-wrap {
-        white-space: nowrap;
-      }  
-    </style>
-  </head>
-  <body>
-    <h2>Amazon Pick List${fileName ? ` - ${fileName}` : ''}</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>SKU</th>
-          <th>Coffee Name</th>
-          <th>Grind</th>
-          <th>Size</th>
-          <th>Quantity</th>
+            <div>
+              <button
+                onClick={() => setShowPickList(true)}
+                disabled={pickList.length === 0}
+                className="btn btn-success"
+              >
+                Generate Pick List
+              </button>
+            </div>
+            <div style={{ minHeight: '2rem', marginTop: '2rem' }}>
+              {fileName ? (
+                <p className="small file-loaded-text">
+                  File loaded: <strong>{fileName}</strong>
+                </p>
+              ) : (
+                <span>&nbsp;</span>
+              )}
+            </div>
+          </header>
+        </>
+) : showInfo ? (
+        // Info screen
+        <div className="info-screen p-4 text-start">
+        <button
+          onClick={() => setShowInfo(false)}
+          className="link-success"
+          aria-label="Back to main screen"
+          style={{
+            background: 'none',
+            border: 'none',
+            padding: 0,
+            cursor: 'pointer',
+            color: '#198754', // ensure it uses your green color
+            textDecoration: 'underline', // optional, for link style
+          }}
+        >
+          ← Back
+        </button>
+
+          <h3>About Pickzilla</h3>
+          <p>
+            Pickzilla is a tool to help you upload TSV or TXT files and generate pick lists easily.
+            Use it to streamline your order fulfillment process.
+          </p>
+          <p>
+            Upload your file, then click "Generate Pick List" to open your list in a new tab.
+          </p>
+        </div>
+) : (
+<div className="picklist-screen p-4 text-start">
+  <button
+    onClick={() => setShowPickList(false)}
+    className="link-success"
+    aria-label="Back to main screen"
+    style={{
+      background: 'none',
+      border: 'none',
+      padding: 0,
+      cursor: 'pointer',
+      color: '#198754',
+      textDecoration: 'underline',
+      fontSize: '1rem',
+      marginBottom: '1rem',
+    }}
+  >
+    ← Back
+  </button>
+
+  <h3>Pick List{fileName ? ` - ${fileName}` : ''}</h3>
+  <table className="table table-dark table-bordered table-sm">
+    <thead>
+      <tr>
+        <th>SKU</th>
+        <th>Coffee Name</th>
+        <th>Grind</th>
+        <th>Size</th>
+        <th>Quantity</th>
+      </tr>
+    </thead>
+    <tbody>
+      {pickList.map((item, index) => (
+        <tr key={index}>
+          <td>{item.sku}</td>
+          <td>{item.coffeeName}</td>
+          <td>{item.type}</td>
+          <td>{item.size}</td>
+          <td>{item.qty}</td>
         </tr>
-      </thead>
-      <tbody>
-        ${pickList
-        .map(
-          (item) => `
-          <tr>
-            <td>${item.sku}</td>
-            <td>${item.coffeeName}</td>
-            <td>${item.type}</td>
-            <td class="no-wrap">${item.size}</td>
-            <td>${item.qty}</td>
-          </tr>
-        `
-        )
-        .join('')}
-      </tbody>
-    </table>
-<table style="margin-top: 3rem;">
-  <thead>
-    <tr>
-      <th>Order IDs</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="white-space: pre-wrap;">${orderIds.join(', ')}</td>
-    </tr>
-  </tbody>
-</table>
-  </body>
-  </html>
-`;
+      ))}
+    </tbody>
+  </table>
 
-    const newWindow = window.open('', '_blank');
-    if (newWindow) {
-      newWindow.document.open();
-      newWindow.document.write(html);
-      newWindow.document.close();
-    } else {
-      alert('Please allow pop-ups for this site to view the pick list.');
-    }
-  };
-
-  return (
-    <div className="App container text-center py-5">
-      <header className="App-header mb-4">
-        <img
-          src="/medium-tiger.png"
-          alt="Logo"
-          style={{ display: 'block', margin: '0 auto 1rem', width: '50px', height: 'auto' }}
-        />
-        <h2 className="mb-4">Amazon Pick List Generator</h2>
-
-        <input
-          type="file"
-          accept=".txt,.tsv"
-          onChange={handleFileUpload}
-          className="form-control mb-3"
-          aria-label="Upload TSV or TXT file"
-        />
-
-        <div>
-          <button
-            onClick={openPickListInNewTab}
-            disabled={pickList.length === 0}
-            className="btn btn-danger"
-          >
-            Generate Pick List
-          </button>
-        </div>
-        <div style={{ minHeight: '2rem', marginTop: '2rem' }}>
-          {fileName ? (
-            <p className="small file-loaded-text">
-              File loaded: <strong>{fileName}</strong>
-            </p>
-          ) : (
-            <span>&nbsp;</span>
-          )}
-        </div>
-      </header>
+  {orderIds.length > 0 && (
+    <div style={{ marginTop: '2rem' }}>
+      <h5>Order IDs</h5>
+      <p style={{ whiteSpace: 'pre-wrap' }}>{orderIds.join(', ')}</p>
+    </div>
+  )}
+</div>
+)}
       <footer
         style={{
           position: 'fixed',
@@ -255,10 +262,21 @@ function App() {
           padding: '0.5rem 0',
           fontSize: '0.8rem',
           color: '#888',
-          backgroundColor: '#121212',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '0.5rem',
         }}
       >
-        built by Daniel B.
+            built by{' '}
+            <a
+              href="https://github.com/danielbrainich"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-success"
+            >
+            Daniel B.
+            </a>
       </footer>
     </div>
   );

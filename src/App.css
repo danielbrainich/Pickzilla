@@ -63,3 +63,12 @@ th {
 .no-wrap {
   white-space: nowrap;
 }
+
+.link-success {
+  color: #198754; /* Bootstrap success green */
+}
+
+.link-success:hover,
+.link-success:focus {
+  color: #145c32; /* darker green on hover/focus */
+}
