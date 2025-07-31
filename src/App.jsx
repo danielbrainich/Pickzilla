@@ -15,7 +15,7 @@ function App() {
   const REQUIRED_HEADERS = ['sku', 'product-name', 'quantity-to-ship', 'order-id'];
 
   const handleFileUpload = (e) => {
-    setError(''); // Clear previous errors
+    setError('');
     const file = e.target.files[0];
     if (!file) return;
 
@@ -26,8 +26,6 @@ function App() {
       delimiter: '\t',
       complete: (results) => {
         const { data, meta } = results;
-
-        // Check if required headers are present (case-insensitive)
         const headers = meta.fields?.map((h) => h.toLowerCase()) || [];
         const missingHeaders = REQUIRED_HEADERS.filter(
           (required) => !headers.includes(required)
@@ -87,22 +85,22 @@ function App() {
       {!showInfo && !showPickList ? (
         <>
           <header className="App-header mb-4">
-            <div className="title-row">
-              <h2 style={{ margin: 0 }}>Pickzilla</h2>
-              <button
-                onClick={() => setShowInfo(true)}
-                aria-label="Show info about Pickzilla"
-                className="info-button"
-              >
-                <AiOutlineInfoCircle />
-              </button>
-            </div>
-            <div className="mx-auto" style={{ maxWidth: '600px' }}>
+            <div className="mx-auto mb-4 image-n-input-div">
               <img
                 src="/godzilla.gif"
                 alt="Logo"
-                className="img-fluid mb-5"
+                className="img-fluid mb-4"
               />
+              <div className="title-row mb-4">
+                <h2 style={{ margin: 0 }}>Pickzilla</h2>
+                <button
+                  onClick={() => setShowInfo(true)}
+                  aria-label="Show info about Pickzilla"
+                  className="info-button"
+                >
+                  <AiOutlineInfoCircle />
+                </button>
+              </div>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -112,7 +110,6 @@ function App() {
                 aria-label="Upload TSV or TXT file"
               />
             </div>
-
             {error && (
               <div className="alert-success-custom" role="alert">
                 {error}
@@ -162,34 +159,32 @@ function App() {
           >
             ← Back
           </button>
-          <div className="container bg-dark text-white rounded p-3 mt-2 shadow-lg">
+          <div className="container bg-dark text-white rounded p-3 mt-3 shadow-lg">
             <h3 className="mb-3">About Pickzilla</h3>
             <p>
-              <strong>Pickzilla</strong> is the easiest way to generate a{' '}
-              <strong>pick list</strong> from your{' '}
-              <strong>Amazon Seller Central Unshipped Order Report</strong>.
+              Pickzilla is the easiest way to generate a pick list from your Amazon
+              Seller Central Unshipped Order Report.
             </p>
-
             <h5 className="mt-4">What’s a Pick List?</h5>
             <p>
-              A <strong>pick list</strong> is a simplified summary of all the products
+              A pick list is a simplified summary of all the products
               you need to ship, grouped by SKU, so your team can fulfill orders efficiently.
             </p>
 
             <h5 className="mt-4">How It Works</h5>
             <ol className="ms-3">
-              <li>Log in to <strong>Amazon Seller Central</strong></li>
-              <li>Go to <strong>Orders</strong> → <strong>Order Reports</strong> → <strong>Unshipped Orders</strong></li>
+              <li>Log in to Amazon Seller Central</li>
+              <li>Go to Orders → Order Reports → Unshipped Orders</li>
               <li>Request and download your report</li>
-              <li>Upload the file to <strong>Pickzilla</strong></li>
+              <li>Upload the file to Pickzilla</li>
               <li>
-                Click <strong>Generate Pick List</strong> to create your pick list
+                Click Generate Pick List to create your pick list
               </li>
             </ol>
             <h5 className="mt-4">Try It Out</h5>
             <p>
-              Want to test it before uploading your own file? Download a sample {' '}
-              <strong>Amazon Seller Central Unshipped Order Report</strong> below and
+              Want to test it before uploading your own file? Download a sample
+              Amazon Seller Central Unshipped Order Report below and
               give it a try.
             </p>
 
@@ -206,54 +201,62 @@ function App() {
         </div>
       ) : (
         <div className="picklist-screen container text-start">
-          <button
-            onClick={() => {
-              setShowPickList(false);
-              setFileName('');
-              setPickList([]);
-              setOrderIds([]);
-              setError('');
-              if (fileInputRef.current) fileInputRef.current.value = '';
-            }}
-            className="back-button"
-            aria-label="Back to main screen"
-          >
-            ← Back
-          </button>
-          <h3 className="pt-2 pb-2">Pick List{fileName ? ` - ${fileName}` : ''}</h3>
-          <div className="table-responsive">
-            <table className="table table-dark table-bordered table-sm custom-table">
-              <colgroup>
-                <col style={{ width: '15%' }} /> {/* SKU */}
-                <col style={{ width: '75%' }} /> {/* Product Name */}
-                <col style={{ width: '7%' }} /> {/* Quantity */}
-              </colgroup>
-              <thead>
-                <tr>
-                  <th>SKU</th>
-                  <th>Product Name</th>
-                  <th>Quantity</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pickList.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.sku}</td>
-                    <td>{item.name}</td>
-                    <td>{item.qty}</td>
+          <div className="content-wrapper">
+            <button
+              onClick={() => {
+                setShowPickList(false);
+                setFileName('');
+                setPickList([]);
+                setOrderIds([]);
+                setError('');
+                if (fileInputRef.current) fileInputRef.current.value = '';
+              }}
+              className="back-button"
+              aria-label="Back to main screen"
+            >
+              ← Back
+            </button>
+            <h3 className="pt-2 pb-2">Pick List{fileName ? ` - ${fileName}` : ''}</h3>
+            <div className="table-responsive">
+              <table className="table table-dark table-bordered table-sm custom-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: '100px' }}>SKU</th>
+                    <th style={{ width: '400px' }}>Product Name</th>
+                    <th style={{ width: '100px' }}>Quantity</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {orderIds.length > 0 && (
-            <div style={{ marginTop: '2rem' }}>
-              <h5>Order IDs</h5>
-              <p style={{ whiteSpace: 'pre-wrap' }}>{orderIds.join(', ')}</p>
+                </thead>
+                <tbody>
+                  {pickList.map((item, index) => (
+                    <tr key={index}>
+                      <td className="td-sku">{item.sku}</td>
+                      <td className="td-name">{item.name}</td>
+                      <td className="td-qty">{item.qty}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
+
+            {orderIds.length > 0 && (
+              <div style={{ marginTop: '2rem' }}>
+                <h5>Order IDs</h5>
+                <div className="table-responsive">
+                  <table className="table table-dark table-bordered table-sm custom-table">
+                    <tbody>
+                      <tr>
+                        <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                          {orderIds.join(', ')}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
+
       )}
       <footer className="footer mb-2">
         built by{' '}
