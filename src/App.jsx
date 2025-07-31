@@ -87,13 +87,6 @@ function App() {
       {!showInfo && !showPickList ? (
         <>
           <header className="App-header mb-4">
-            <img
-              src="/godzilla.gif"
-              alt="Logo"
-              width="300"
-              height="auto"
-              className="pickzilla-logo"
-            />
             <div className="title-row">
               <h2 style={{ margin: 0 }}>Pickzilla</h2>
               <button
@@ -104,14 +97,22 @@ function App() {
                 <AiOutlineInfoCircle />
               </button>
             </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".txt,.tsv"
-              onChange={handleFileUpload}
-              className="form-control mb-3"
-              aria-label="Upload TSV or TXT file"
-            />
+            <div className="mx-auto" style={{ maxWidth: '600px' }}>
+              <img
+                src="/godzilla.gif"
+                alt="Logo"
+                className="img-fluid mb-5"
+              />
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".txt,.tsv"
+                onChange={handleFileUpload}
+                className="form-control"
+                aria-label="Upload TSV or TXT file"
+              />
+            </div>
+
             {error && (
               <div className="alert-success-custom" role="alert">
                 {error}
@@ -172,13 +173,13 @@ function App() {
             <h5 className="mt-4">What’s a Pick List?</h5>
             <p>
               A <strong>pick list</strong> is a simplified summary of all the products
-              you need to ship—grouped by SKU—so your team can fulfill orders efficiently.
+              you need to ship, grouped by SKU, so your team can fulfill orders efficiently.
             </p>
 
             <h5 className="mt-4">How It Works</h5>
             <ol className="ms-3">
               <li>Log in to <strong>Amazon Seller Central</strong></li>
-              <li>Go to <strong>Orders → Order Reports → Unshipped Orders</strong></li>
+              <li>Go to <strong>Orders</strong> → <strong>Order Reports</strong> → <strong>Unshipped Orders</strong></li>
               <li>Request and download your report</li>
               <li>Upload the file to <strong>Pickzilla</strong></li>
               <li>
@@ -254,7 +255,7 @@ function App() {
           )}
         </div>
       )}
-      <footer className="footer">
+      <footer className="footer mb-2">
         built by{' '}
         <a
           href="https://github.com/danielbrainich"
