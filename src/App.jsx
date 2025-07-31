@@ -78,10 +78,8 @@ function App() {
   };
 
   return (
-    <div
-      className="App container text-center py-5"
-      style={{ minHeight: '100vh', paddingBottom: '3rem' }}
-    >
+<div className="App d-flex flex-column align-items-center text-center py-5">
+
       {!showInfo && !showPickList ? (
         <>
           <header className="App-header mb-4">
@@ -221,9 +219,9 @@ function App() {
               <table className="table table-dark table-bordered table-sm custom-table">
                 <thead>
                   <tr>
-                    <th style={{ width: '100px' }}>SKU</th>
+                    <th style={{ width: '140px' }}>SKU</th>
                     <th style={{ width: '400px' }}>Product Name</th>
-                    <th style={{ width: '100px' }}>Quantity</th>
+                    <th style={{ width: '60px' }}>Quantity</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -258,7 +256,7 @@ function App() {
         </div>
 
       )}
-      <footer className="footer mb-2">
+      <footer className="footer">
         built by{' '}
         <a
           href="https://github.com/danielbrainich"

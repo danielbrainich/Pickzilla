@@ -9,14 +9,11 @@ html, body {
 }
 
 .App {
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  background-color: #121212; 
+  min-height: 100vh;
+  display: block;
   padding: 1rem;
   box-sizing: border-box;
+  background-color: #121212;
 }
 
 .App-header {
@@ -142,12 +139,9 @@ html, body {
 }
 
 .footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
   text-align: center;
   padding: 0.5rem 0;
-  font-size: .9rem;
+  font-size: 0.9rem;
   color: #888;
   display: flex;
   justify-content: center;
