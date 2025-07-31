@@ -146,7 +146,6 @@ function App() {
           </header>
         </>
       ) : showInfo ? (
-        // Info screen
         <div className="info-screen p-4 text-start">
           <button
             onClick={() => {
@@ -162,16 +161,47 @@ function App() {
           >
             ← Back
           </button>
+          <div className="container bg-dark text-white rounded p-3 mt-2 shadow-lg">
+            <h3 className="mb-3">About Pickzilla</h3>
+            <p>
+              <strong>Pickzilla</strong> is the easiest way to generate a{' '}
+              <strong>pick list</strong> from your{' '}
+              <strong>Amazon Seller Central Unshipped Order Report</strong>.
+            </p>
 
-          <h3>About Pickzilla</h3>
-          <p>
-            Pickzilla is a tool to help you upload TSV or TXT files and generate pick
-            lists easily. Use it to streamline your order fulfillment process.
-          </p>
-          <p>
-            Upload your file, then click "Generate Pick List" to open your list in a
-            new tab.
-          </p>
+            <h5 className="mt-4">What’s a Pick List?</h5>
+            <p>
+              A <strong>pick list</strong> is a simplified summary of all the products
+              you need to ship—grouped by SKU—so your team can fulfill orders efficiently.
+            </p>
+
+            <h5 className="mt-4">How It Works</h5>
+            <ol className="ms-3">
+              <li>Log in to <strong>Amazon Seller Central</strong></li>
+              <li>Go to <strong>Orders → Order Reports → Unshipped Orders</strong></li>
+              <li>Request and download your report</li>
+              <li>Upload the file to <strong>Pickzilla</strong></li>
+              <li>
+                Click <strong>Generate Pick List</strong> to create your pick list
+              </li>
+            </ol>
+            <h5 className="mt-4">Try It Out</h5>
+            <p>
+              Want to test it before uploading your own file? Download a sample {' '}
+              <strong>Amazon Seller Central Unshipped Order Report</strong> below and
+              give it a try.
+            </p>
+
+            <div className="text-center mt-4 mb-2">
+              <a
+                href="/sample-unshipped-orders.txt"
+                download
+                className="btn btn-success"
+              >
+                Download Sample Report
+              </a>
+            </div>
+          </div>
         </div>
       ) : (
         <div className="picklist-screen container text-start">
