@@ -4,7 +4,7 @@ Pickzilla is a simple React app that generates a pick list from your Amazon Sell
 
 ## Why Pickzilla?
 
-Amazon Seller Central does not natively provide an easy way to generate a consolidated pick list from unshipped orders. The alternatives often involve integrating expensive, complex warehouse management systems or dealing with difficult manual fulfillment processes. Pickzilla offers a quick, easy, and free solution to create pick lists so you can fulfill orders more efficiently.
+Amazon Seller Central does not natively provide an easy way to generate a consolidated pick list from unshipped orders. The alternatives involve integrating complex warehouse management systems or dealing with difficult manual fulfillment processes. Pickzilla offers a quick, easy, and free solution to create pick lists so you can fulfill orders more efficiently.
 
 ## Features
 
@@ -39,10 +39,9 @@ If any of these are missing, Pickzilla will show an error and refuse to generate
 
 ## Technologies Used
 
-- React (with hooks)  
+- React
 - Papaparse for TSV parsing  
-- React Icons (for info button)  
-- Bootstrap CSS classes for basic styling
+- Bootstrap CSS for basic styling
 
 ## License
 
